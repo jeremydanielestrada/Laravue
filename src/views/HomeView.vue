@@ -1,5 +1,9 @@
-<script setup></script>
+<script setup>
+import AppLayout from '@/components/layout/AppLayout.vue'
+</script>
 
 <template>
-  <h1>SuccesFUlly LogIN</h1>
+  <AppLayout>
+    <template name="content"> </template>
+  </AppLayout>
 </template>
