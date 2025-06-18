@@ -18,6 +18,8 @@ const onLogout = async () => {
     // Reset State
     setTimeout(() => {
       authStore.$reset()
+
+      //remove tokens from localStorage
       localStorage.removeItem('token', response.data.token)
       localStorage.removeItem('user', response.data.user)
     }, 2500)

@@ -15,7 +15,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://crudpractice.test/', // your Laravel backend
+        target: 'http://crudpractice.test/', // Laravel backend
+        changeOrigin: true,
+        secure: false,
+      },
+      '/storage': {
+        target: 'http://crudpractice.test/', // Ensure public/storage is linked
         changeOrigin: true,
         secure: false,
       },
