@@ -28,16 +28,11 @@ export const useItemStore = defineStore('itemStore', () => {
 
   //Update an Item
   async function updateItem(formData) {
+    await getItems()
     try {
-      const id = formData.get('id')
-      if (!id) throw new Error('Missing item ID for update')
-
-      const response = await api.post(`/item/${id}?_method=PUT`, formData)
-
-      return {
-        data: response.data,
-        error: null,
-      }
+      const id = formData.get('id') || formData.get('item_id')
+      if (!id) throw new Error('Item ID is missing for update')
+      return await api.post(`/item/${id}?_method=PUT`, formData) // ✅ ID in URL
     } catch (error) {
       return {
         data: null,
