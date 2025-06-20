@@ -1,12 +1,28 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AddItemsDialog from '@/components/common/AddItemsDialog.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/itemStore'
 import { getMoneyText } from '@/utils/helpers'
 
-const isAddItem = ref(false)
+const isDialogVisible = ref(false)
 const itemStore = useItemStore()
+const itemData = ref(null)
+
+// Add Item
+const onAdd = () => {
+  itemData.value = null
+  isDialogVisible.value = true
+}
+
+const onUpdate = (id) => {
+  itemData.value = id
+  isDialogVisible.value = true
+}
+
+const onDelete = async (id) => {
+  await itemStore.deleteItem(id)
+}
 
 onMounted(() => {
   itemStore.getItems()
@@ -28,7 +44,7 @@ onMounted(() => {
             <v-btn icon variant="plain" size="50" class="mb-5">
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
-            <v-btn icon variant="plain" size="50" class="mb-5" @click="isAddItem = true">
+            <v-btn icon variant="plain" size="50" class="mb-5" @click="onAdd">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </div>
@@ -44,29 +60,30 @@ onMounted(() => {
             <v-img
               v-if="item.image_path"
               :src="`/storage/${item.image_path}`"
-              height="100"
+              height="50"
               cover
             ></v-img>
 
             <v-card-text>
               <p class="mb-2">{{ item.description }}</p>
+              <p>{{ item.item_id }}</p>
 
               <h2>{{ getMoneyText(item.price) }}</h2>
             </v-card-text>
 
             <v-card-actions>
-              <!-- <v-btn variant="elevated" density="comfortable" @click="onUpdate(item)" icon>
+              <v-btn variant="elevated" density="comfortable" @click="onUpdate(item.item_id)" icon>
                 <v-icon icon="mdi-pencil"></v-icon>
-              </v-btn> -->
+              </v-btn>
 
-              <!-- <v-btn variant="elevated" density="comfortable" @click="onDelete(item.id)" icon>
+              <v-btn variant="elevated" density="comfortable" @click="onDelete(item.item_id)" icon>
                 <v-icon color="error" icon="mdi-trash-can"></v-icon>
-              </v-btn> -->
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
-      <AddItemsDialog v-model="isAddItem"></AddItemsDialog>
+      <AddItemsDialog v-model="isDialogVisible" :item-data="itemData"></AddItemsDialog>
     </template>
   </AppLayout>
 </template>

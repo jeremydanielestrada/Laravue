@@ -1,18 +1,23 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, watch } from 'vue'
 import { useItemStore } from '@/stores/itemStore'
 import { useAuthStore } from '@/stores/authStore'
 import { fileExtract } from '@/utils/helpers'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps({
   modelValue: Boolean,
+  itemData: Number,
 })
 
+const emit = defineEmits(['update:modelValue'])
+
+// Utilize pre-defined vue functions
+const { mdAndDown } = useDisplay()
+
+//Use pinia store
 const itemStore = useItemStore()
 const authStore = useAuthStore()
-
-const emit = defineEmits(['update:modelValue'])
-const close = () => emit('update:modelValue', false)
 
 const selectedFile = ref(null)
 const isLoading = ref(false)
@@ -33,6 +38,24 @@ const formData = ref({
   ...formDataDefault,
 })
 
+// Monitor itemData if it has data
+watch(
+  () => props.itemData,
+  () => {
+    isUpdate.value = props.itemData ? true : false
+    formData.value = props.itemData
+      ? { ...props.itemData, id: props.itemData.id || props.itemData.item_id }
+      : { ...formDataDefault }
+
+    // If updating, show the saved image from backend
+    if (isUpdate.value && props.itemData?.image_path) {
+      imgPreview.value = `/storage/${props.itemData.image_path}`
+    } else {
+      imgPreview.value = '/images/item-image.png'
+    }
+  },
+)
+
 // Watch for changes in authStore to populate user_id
 watchEffect(() => {
   if (authStore.userData?.id) {
@@ -49,7 +72,7 @@ watchEffect(() => {
 const onPreview = async (event) => {
   const { fileObject, fileUrl } = await fileExtract(event)
   // Update formData
-  formData.value.image = fileObject
+  formData.value.image_path = fileObject
   // Update imgPreview state
   imgPreview.value = fileUrl
 }
@@ -60,29 +83,74 @@ const onPreviewReset = () => {
 }
 
 //Define functions
-const addItem = async () => {
+const onSubmit = async () => {
   isLoading.value = true
 
   const form = new FormData()
 
+  // ✅ Append fields from formData
   for (const key in formData.value) {
-    form.append(key, formData.value[key])
+    const value = formData.value[key]
+    if (value !== null && value !== '' && typeof value !== 'undefined') {
+      form.append(key, value)
+    }
   }
 
-  const { data, error } = await itemStore.addItem(form)
+  // ✅ Make sure item_id is included before the request
+  if (isUpdate.value && formData.value.item_id) {
+    form.append('id', formData.value.id)
+    console.log('Appending ID:', formData.value.id)
+  }
 
-  if (error) {
-    alert(error.message)
-  } else if (data) {
+  console.log('Updating item with ID:', formData.value.id)
+
+  // ✅ Log again to verify
+  for (let pair of form.entries()) {
+    console.log(pair[0], pair[1])
+  }
+
+  for (let [key, val] of form.entries()) {
+    console.log(`${key}:`, val)
+  }
+
+  // ✅ Now call the API
+  const { data, error } = isUpdate.value
+    ? await itemStore.isUpdate(form)
+    : await itemStore.addItem(form)
+
+  if (data) {
     await itemStore.getItems()
+    onFormReset()
+  } else if (error) {
+    alert(error.message)
   }
-  resetForm()
+
+  isLoading.value = false
 }
-function resetForm() {
+
+// Trigger Validators
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
+
+// function resetForm() {
+//   formData.value = { ...formDataDefault, user_id: authStore.userData?.id }
+//   selectedFile.value = null
+//   refVForm.value?.reset()
+// }
+
+// Form Reset
+function onFormReset() {
+  refVForm.value?.reset()
   formData.value = { ...formDataDefault, user_id: authStore.userData?.id }
   selectedFile.value = null
-  refVForm.value?.reset()
-  close()
+
+  //  Add this slight delay to allow reset to complete
+  setTimeout(() => {
+    emit('update:modelValue', false)
+  }, 100)
 }
 </script>
 
@@ -95,7 +163,7 @@ function resetForm() {
   >
     <v-card class="pa-3">
       <v-card-title>Add Item</v-card-title>
-      <v-form ref="refVForm" fast-fail @submit.prevent="addItem">
+      <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
         <v-text-field label="Name" v-model="formData.item_name" />
         <v-text-field type="number" label="Price" v-model="formData.price" />
         <v-textarea label="Description" v-model="formData.description" clearable />
@@ -123,7 +191,7 @@ function resetForm() {
         ></v-file-input>
       </v-form>
       <v-card-actions>
-        <v-btn @click="close">Close</v-btn>
+        <v-btn @click="onFormReset">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
