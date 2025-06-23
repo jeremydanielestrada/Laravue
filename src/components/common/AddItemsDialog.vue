@@ -34,7 +34,7 @@ const formDataDefault = {
   price: '',
   description: '',
   user_id: null,
-  id: null, // <-- used for update
+  id: null,
 }
 
 const formData = ref({ ...formDataDefault })
@@ -102,9 +102,7 @@ const onSubmit = async () => {
 
   for (const key in formData.value) {
     const value = formData.value[key]
-    if (value !== null && value !== '' && typeof value !== 'undefined') {
-      form.append(key, value)
-    }
+    form.append(key, value)
   }
 
   console.log('⬇ Submitting FormData:')
@@ -112,6 +110,7 @@ const onSubmit = async () => {
     console.log(`${k}:`, v)
   }
 
+  //Update or Add item
   const { data, error } = isUpdate.value
     ? await itemStore.updateItem(form)
     : await itemStore.addItem(form)

@@ -14,6 +14,14 @@ export const useItemStore = defineStore('itemStore', () => {
     items.value = response.data
   }
 
+  async function searchItems(search) {
+    const response = await api.get('/item', {
+      params: { q: search },
+    })
+    items.value = response.data
+    return { data: response.data, error: null }
+  }
+
   //Add item to database
   async function addItem(formData) {
     isLoading.value = true
@@ -59,5 +67,6 @@ export const useItemStore = defineStore('itemStore', () => {
     addItem,
     updateItem,
     deleteItem,
+    searchItems,
   }
 })

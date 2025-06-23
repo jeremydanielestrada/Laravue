@@ -9,6 +9,12 @@ const isDialogVisible = ref(false)
 const itemStore = useItemStore()
 const itemData = ref(null)
 
+const tableFilters = ref({
+  search: '',
+})
+
+const loadingItems = ref(true)
+
 // Add Item
 const onAdd = () => {
   itemData.value = null
@@ -24,6 +30,14 @@ const onDelete = async (id) => {
   await itemStore.deleteItem(id)
 }
 
+const onSearch = async () => {
+  const search = tableFilters.value.search
+
+  if (search?.length >= 3 || search?.length === 0 || search === null) {
+    await itemStore.searchItems(search) // ✅ Pass just the string
+  }
+}
+
 onMounted(() => {
   itemStore.getItems()
 })
@@ -32,18 +46,20 @@ onMounted(() => {
 <template>
   <AppLayout>
     <template #content>
+      <!-- Load the items -->
       <v-row>
         <v-col cols="12" md="12" lg="4">
           <div class="d-flex align-center justify-center">
             <v-text-field
-              label="Search"
+              v-model="tableFilters.search"
+              label="Search Item"
               variant="outlined"
               density="compact"
-              clearable=""
+              append-inner-icon="mdi-magnify"
+              clearable
+              @click:clear="onSearch"
+              @input="onSearch"
             ></v-text-field>
-            <v-btn icon variant="plain" size="50" class="mb-5">
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
             <v-btn icon variant="plain" size="50" class="mb-5" @click="onAdd">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -55,6 +71,9 @@ onMounted(() => {
       <!-- Display items from database -->
 
       <v-row>
+        <v-col cols="12" sm="4" md="6" lg="12">
+          <div :loading="loadingItems"></div>
+        </v-col>
         <v-col cols="12" sm="4" v-for="item in itemStore.items" :key="item.id">
           <v-card :title="item.item_name" height="250">
             <v-img

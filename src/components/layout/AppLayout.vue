@@ -34,6 +34,7 @@ watch(
     if (mobile.value) drawer.value = false
   },
 )
+//Store user role in local storage
 </script>
 <template>
   <v-responsive class="border rounded">

@@ -47,7 +47,11 @@ const onLogout = async () => {
 
         <v-avatar v-else color="light-green-lighten-5" size="large">
           <span class="text-h5">
-            {{ getAvatarText(authStore.userData.name) }}
+            {{
+              authStore.userData
+                ? getAvatarText(authStore.userData.first_name + ' ' + authStore.userData.last_name)
+                : ''
+            }}
           </span>
         </v-avatar>
       </v-btn>
@@ -56,7 +60,10 @@ const onLogout = async () => {
     <v-card class="mt-1">
       <v-card-text>
         <v-list>
-          <v-list-item :subtitle="authStore.userData.email" :title="authStore.userData.name">
+          <v-list-item
+            :subtitle="authStore.userData.email"
+            :title="authStore.userData.first_name + ' ' + authStore.userData.last_name"
+          >
             <template #prepend>
               <v-avatar
                 v-if="authStore.userData.image_path"
@@ -68,7 +75,13 @@ const onLogout = async () => {
 
               <v-avatar v-else color="blue-lighten-5" size="large">
                 <span class="text-h5">
-                  {{ getAvatarText(authStore.userData.name) }}
+                  {{
+                    authStore.userData
+                      ? getAvatarText(
+                          authStore.userData.first_name + ' ' + authStore.userData.last_name,
+                        )
+                      : ''
+                  }}
                 </span>
               </v-avatar>
             </template>
