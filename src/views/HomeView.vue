@@ -2,6 +2,7 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AddItemsDialog from '@/components/common/AddItemsDialog.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/itemStore'
 import { getMoneyText } from '@/utils/helpers'
@@ -10,12 +11,16 @@ const isDialogVisible = ref(false)
 const itemStore = useItemStore()
 const itemData = ref(null)
 const isDrawerVisible = ref(false)
-
+const isDeleteVisible = ref(false)
 const tableFilters = ref({
   search: '',
 })
 
 const loadingItems = ref(true)
+
+// const showConfirm = () => {
+//   isDeleteVisible.value = true
+// }
 
 // Add Item
 const onAdd = () => {
@@ -30,6 +35,7 @@ const onUpdate = (id) => {
 
 const onDelete = async (id) => {
   await itemStore.deleteItem(id)
+  isDeleteVisible.value = false
 }
 
 const onSearch = async () => {
@@ -104,9 +110,15 @@ onMounted(() => {
                 <v-icon icon="mdi-pencil"></v-icon>
               </v-btn>
 
-              <v-btn variant="elevated" density="comfortable" @click="onDelete(item.item_id)" icon>
+              <v-btn variant="elevated" density="comfortable" @click="isDeleteVisible = true" icon>
                 <v-icon color="error" icon="mdi-trash-can"></v-icon>
               </v-btn>
+              <ConfirmDialog
+                v-model:isDialogVisible="isDeleteVisible"
+                title="Delete Item"
+                text="Are you sure you want to delete this?"
+                @confirm="onDelete(item.item_id)"
+              ></ConfirmDialog>
             </v-card-actions>
           </v-card>
         </v-col>
