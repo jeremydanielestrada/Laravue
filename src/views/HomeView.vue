@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AddItemsDialog from '@/components/common/AddItemsDialog.vue'
+import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/itemStore'
 import { getMoneyText } from '@/utils/helpers'
@@ -8,6 +9,7 @@ import { getMoneyText } from '@/utils/helpers'
 const isDialogVisible = ref(false)
 const itemStore = useItemStore()
 const itemData = ref(null)
+const isDrawerVisible = ref(false)
 
 const tableFilters = ref({
   search: '',
@@ -44,7 +46,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppLayout>
+  <AppLayout
+    :is-with-app-bar-nav-icon="true"
+    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
+  >
+    <template #navigation>
+      <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
+    </template>
+
     <template #content>
       <!-- Load the items -->
       <v-row>

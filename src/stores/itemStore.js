@@ -18,7 +18,7 @@ export const useItemStore = defineStore('itemStore', () => {
     const response = await api.get('/item', {
       params: { q: search },
     })
-    items.value = response.data
+    // items.value = response.data
     return { data: response.data, error: null }
   }
 
