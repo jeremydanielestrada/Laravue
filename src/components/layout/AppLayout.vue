@@ -35,7 +35,7 @@ onMounted(() => {
 <template>
   <v-responsive class="border rounded">
     <v-app>
-      <v-app-bar app color="blue">
+      <v-app-bar app color="blue" border>
         <v-app-bar-nav-icon
           v-if="props.isWithAppBarNavIcon"
           icon="mdi-menu"
