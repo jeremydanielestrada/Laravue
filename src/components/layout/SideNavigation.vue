@@ -26,6 +26,7 @@ watch(
     :permanent="!mobile"
     width="325"
   >
+    <!-- Add navigation item inside the list -->
     <v-list>
       <v-list-item title="Navigation drawer"></v-list-item>
     </v-list>

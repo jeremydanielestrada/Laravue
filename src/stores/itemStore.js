@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useAuthStore } from './authStore'
 import api from '@/utils/service'
 
 export const useItemStore = defineStore('itemStore', () => {
@@ -18,7 +17,7 @@ export const useItemStore = defineStore('itemStore', () => {
     const response = await api.get('/item', {
       params: { q: search },
     })
-    // items.value = response.data
+    items.value = response.data
     return { data: response.data, error: null }
   }
 

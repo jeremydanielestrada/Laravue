@@ -146,7 +146,7 @@ function onFormReset() {
 
 <template>
   <v-dialog
-    width="500px"
+    :width="mdAndDown ? 500 : 800"
     :model-value="props.modelValue"
     @update:modelValue="emit('update:modelValue', $event)"
     persistent

@@ -54,8 +54,8 @@ onMounted(() => {
       <SideNavigation :is-drawer-visible="isDrawerVisible"></SideNavigation>
     </template>
 
+    <!-- Load the items -->
     <template #content>
-      <!-- Load the items -->
       <v-row>
         <v-col cols="12" md="12" lg="4">
           <div class="d-flex align-center justify-center">
