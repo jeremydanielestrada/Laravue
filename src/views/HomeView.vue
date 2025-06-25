@@ -90,17 +90,16 @@ onMounted(() => {
           <div :loading="loadingItems"></div>
         </v-col>
         <v-col cols="12" sm="4" v-for="item in itemStore.items" :key="item.id">
-          <v-card :title="item.item_name" height="250">
-            <v-img
-              v-if="item.image_path"
-              :src="`/storage/${item.image_path}`"
-              height="50"
-              cover
-            ></v-img>
-
+          <v-card :title="item.item_name" height="400" width="500">
             <v-card-text>
+              <v-img
+                v-if="item.image_path"
+                :src="`/storage/${item.image_path}`"
+                height="200"
+                cover
+              ></v-img>
+
               <p class="mb-2">{{ item.description }}</p>
-              <p>{{ item.item_id }}</p>
 
               <h2>{{ getMoneyText(item.price) }}</h2>
             </v-card-text>

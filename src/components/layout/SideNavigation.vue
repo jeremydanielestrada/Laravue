@@ -28,7 +28,8 @@ watch(
   >
     <!-- Add navigation item inside the list -->
     <v-list>
-      <v-list-item title="Navigation drawer"></v-list-item>
+      <v-list-item prepend-icon="mdi-home" title="Home" to="/home"> </v-list-item>
+      <v-list-item prepend-icon="mdi-nas" title="Inventory" to="/inventory"> </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
