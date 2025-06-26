@@ -3,9 +3,25 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useInventoryStore } from '@/stores/inventoryStore'
+import { getMoneyText } from '@/utils/helpers'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 
+//Load Variables
 const authStore = useAuthStore()
+const invStore = useInventoryStore()
 const isDrawerVisible = ref(false)
+const isDialogVisible = ref(false)
+
+const onDelete = async (id) => {
+  await invStore.deleteInvItem(id)
+  isDialogVisible.value = true
+}
+
+onMounted(() => {
+  if (invStore.invItems.length == 0) invStore.getInvItems()
+  console.log(invStore.invItems.id)
+})
 </script>
 
 <template>
@@ -34,8 +50,47 @@ const isDrawerVisible = ref(false)
           </div>
         </v-col>
       </v-row>
-
       <v-divider></v-divider>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-table density="compact">
+            <thead>
+              <tr>
+                <th class="text-left font-weight-bold">Item name</th>
+                <th class="text-left font-weight-bold">Owner</th>
+                <th class="text-left font-weight-bold">Price</th>
+                <th class="text-left font-weight-bold">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in invStore.invItems" :key="item.id">
+                <td>{{ item.item.item_name }}</td>
+                <td>{{ item.user.first_name + ' ' + item.user.last_name }}</td>
+                <td>{{ getMoneyText(item.item.price) }}</td>
+                <td>{{ item.quantity }}</td>
+                <v-btn
+                  icon
+                  size="xm"
+                  variant="plain"
+                  density="comfortable"
+                  color="error"
+                  @click="isDialogVisible = true"
+                >
+                  <v-icon>mdi-trash-can</v-icon>
+                </v-btn>
+                <ConfirmDialog
+                  v-model:isDialogVisible="isDialogVisible"
+                  title="Delete  Item"
+                  text="Are you sure deleting this item?"
+                  @confirm="onDelete(item.id)"
+                ></ConfirmDialog>
+              </tr>
+            </tbody>
+          </v-table>
+        </v-col>
+      </v-row>
     </template>
   </AppLayout>
 </template>
+
+<style scoped></style>

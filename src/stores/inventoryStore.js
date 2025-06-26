@@ -24,9 +24,10 @@ export const useInventoryStore = defineStore('inventoryStore', () => {
 
   //Delete an Item to the inventory
   async function deleteInvItem(id) {
-    const response = await api.delete(`/inventory${id}`)
+    const response = await api.delete(`/inventory/${id}`)
     await getInvItems()
-    return response.data
+    console.log('Deleting inventory with ID:', id)
+    return { data: response.data, error: response.error }
   }
   return {
     invItems,

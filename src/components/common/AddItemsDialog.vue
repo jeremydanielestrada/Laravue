@@ -35,6 +35,7 @@ const formDataDefault = {
   description: '',
   user_id: null,
   id: null,
+  quantity: '',
 }
 
 const formData = ref({ ...formDataDefault })
@@ -156,7 +157,10 @@ function onFormReset() {
 
       <v-form ref="refVForm" fast-fail @submit.prevent="onFormSubmit">
         <v-text-field label="Name" v-model="formData.item_name" />
-        <v-text-field type="number" label="Price" v-model="formData.price" />
+        <div class="d-flex ga-5">
+          <v-text-field type="number" label="Price" v-model="formData.price" />
+          <v-text-field type="number" label="Quantity" v-model="formData.quantity" />
+        </div>
         <v-textarea label="Description" v-model="formData.description" clearable />
 
         <v-btn block color="blue-darken-3" type="submit" :loading="isLoading">
