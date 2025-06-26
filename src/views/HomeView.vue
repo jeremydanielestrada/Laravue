@@ -6,6 +6,7 @@ import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/itemStore'
 import { getMoneyText } from '@/utils/helpers'
+import { useDisplay } from 'vuetify'
 
 const isDialogVisible = ref(false)
 const itemStore = useItemStore()
@@ -16,6 +17,7 @@ const tableFilters = ref({
   search: '',
 })
 
+const { mobile } = useDisplay()
 const loadingItems = ref(true)
 
 // const showConfirm = () => {
@@ -63,7 +65,7 @@ onMounted(() => {
     <!-- Load the items -->
     <template #content>
       <v-row>
-        <v-col cols="12" md="12" lg="4">
+        <v-col cols="12" sm="6" md="12" lg="4">
           <div class="d-flex align-center justify-center">
             <v-text-field
               v-model="tableFilters.search"
@@ -86,11 +88,11 @@ onMounted(() => {
       <!-- Display items from database -->
 
       <v-row>
-        <v-col cols="12" sm="4" md="6" lg="12">
+        <!-- <v-col cols="12" sm="4" md="6" lg="12">
           <div :loading="loadingItems"></div>
-        </v-col>
-        <v-col cols="12" sm="4" v-for="item in itemStore.items" :key="item.id">
-          <v-card :title="item.item_name" height="400" width="500">
+        </v-col> -->
+        <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="item in itemStore.items" :key="item.id">
+          <v-card :title="item.item_name" height="100%" class="d-flex flex-column">
             <v-card-text>
               <v-img
                 v-if="item.image_path"
