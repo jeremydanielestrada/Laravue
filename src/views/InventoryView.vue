@@ -20,8 +20,11 @@ const onDelete = async (id) => {
 
 onMounted(() => {
   if (invStore.invItems.length == 0) invStore.getInvItems()
-  console.log(invStore.invItems.id)
 })
+
+const onPageChange = (page) => {
+  invStore.getInvItems(page)
+}
 </script>
 
 <template>
@@ -77,6 +80,7 @@ onMounted(() => {
                   @click="isDialogVisible = true"
                 >
                   <v-icon>mdi-trash-can</v-icon>
+                  <v-tooltip activator="parent" location="top">Delete Item</v-tooltip>
                 </v-btn>
                 <ConfirmDialog
                   v-model:isDialogVisible="isDialogVisible"
@@ -89,8 +93,18 @@ onMounted(() => {
           </v-table>
         </v-col>
       </v-row>
+      <v-footer app padless class="bg-white">
+        <v-container class="d-flex justify-center py-2">
+          <v-pagination
+            v-if="invStore.pagination.lastPage > 1"
+            v-model="invStore.pagination.currentPage"
+            :length="invStore.pagination.lastPage"
+            @input="onPageChange"
+          >
+          </v-pagination>
+        </v-container>
+      </v-footer>
     </template>
   </AppLayout>
 </template>
-
 <style scoped></style>

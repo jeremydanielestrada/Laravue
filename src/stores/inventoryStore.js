@@ -4,11 +4,23 @@ import api from '@/utils/service'
 
 export const useInventoryStore = defineStore('inventoryStore', () => {
   const invItems = ref([])
+  const pagination = ref({
+    total: 0,
+    currentPage: 1,
+    lastPage: 1,
+  })
 
   //Get inventory Items from data base
-  async function getInvItems() {
-    const response = await api.get('/inventory')
-    invItems.value = response.data
+  async function getInvItems(page = 1, perPage = 10) {
+    const response = await api.get('/inventory', {
+      params: { page, per_page: perPage },
+    })
+    invItems.value = response.data.data
+    pagination.value = {
+      total: response.data.total,
+      currentPage: response.data.current_page,
+      lastPage: response.data.last_page,
+    }
   }
 
   //Add items to inventory
@@ -31,6 +43,7 @@ export const useInventoryStore = defineStore('inventoryStore', () => {
   }
   return {
     invItems,
+    pagination,
     getInvItems,
     addInvItems,
     deleteInvItem,
