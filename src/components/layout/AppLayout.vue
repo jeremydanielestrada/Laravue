@@ -8,19 +8,10 @@ import { useAuthStore } from '@/stores/authStore'
 const { mobile } = useDisplay()
 const drawer = ref(true)
 const authStore = useAuthStore()
-const isLoggedIn = ref(false)
 
 const props = defineProps(['isWithAppBarNavIcon'])
 
 const emit = defineEmits(['isDrawerVisible'])
-
-//Get logged Status
-const getLoggedStatus = async () => {
-  isLoggedIn.value = await authStore.isAuthenticated()
-}
-
-// Load Functions during component rendering
-onMounted(() => getLoggedStatus())
 
 onMounted(() => {
   if (mobile.value) {
@@ -42,7 +33,7 @@ onMounted(() => {
           @click="emit('isDrawerVisible')"
         ></v-app-bar-nav-icon>
         <v-spacer> </v-spacer>
-        <ProfileNavigation v-if="isLoggedIn"></ProfileNavigation>
+        <ProfileNavigation v-if="authStore.isLoggedIn"></ProfileNavigation>
       </v-app-bar>
 
       <slot name="navigation"></slot>

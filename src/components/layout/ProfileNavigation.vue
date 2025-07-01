@@ -38,18 +38,20 @@ const onLogout = async () => {
     <template #activator="{ props }">
       <v-btn icon v-bind="props">
         <v-avatar
-          v-if="authStore.userData.image_url"
-          :image="authStore.userData.image_url"
-          color="orange-darken-3"
+          v-if="authStore.user.image"
+          :image="
+            authStore.user.image ? `/storage/${authStore.user.image}` : '/images/defaultProfile.jpg'
+          "
+          color="blue-darken-3"
           size="large"
         >
         </v-avatar>
 
-        <v-avatar v-else color="light-green-lighten-5" size="large">
+        <v-avatar v-else color="blue-lighten-5" size="large">
           <span class="text-h5">
             {{
-              authStore.userData
-                ? getAvatarText(authStore.userData.first_name + ' ' + authStore.userData.last_name)
+              authStore.user
+                ? getAvatarText(authStore.user.first_name + ' ' + authStore.user.last_name)
                 : ''
             }}
           </span>
@@ -61,13 +63,17 @@ const onLogout = async () => {
       <v-card-text>
         <v-list>
           <v-list-item
-            :subtitle="authStore.userData.email"
-            :title="authStore.userData.first_name + ' ' + authStore.userData.last_name"
+            :subtitle="authStore.user.email"
+            :title="authStore.user.first_name + ' ' + authStore.user.last_name"
           >
             <template #prepend>
               <v-avatar
-                v-if="authStore.userData.image_path"
-                :image="authStore.userData.image_path"
+                v-if="authStore.user.image"
+                :image="
+                  authStore.user.image
+                    ? `/storage/${authStore.user.image}`
+                    : '/images/defaultProfile.jpg'
+                "
                 color="blue-darken-3"
                 size="large"
               >
@@ -76,10 +82,8 @@ const onLogout = async () => {
               <v-avatar v-else color="blue-lighten-5" size="large">
                 <span class="text-h5">
                   {{
-                    authStore.userData
-                      ? getAvatarText(
-                          authStore.userData.first_name + ' ' + authStore.userData.last_name,
-                        )
+                    authStore.user
+                      ? getAvatarText(authStore.user.first_name + ' ' + authStore.user.last_name)
                       : ''
                   }}
                 </span>

@@ -12,10 +12,20 @@ const authStore = useAuthStore()
 const invStore = useInventoryStore()
 const isDrawerVisible = ref(false)
 const isDialogVisible = ref(false)
+const itemToDelete = ref(null)
+const isLoading = ref(true)
 
-const onDelete = async (id) => {
-  await invStore.deleteInvItem(id)
+const confirmDelete = (id) => {
+  itemToDelete.value = id
   isDialogVisible.value = true
+}
+
+const onDelete = async () => {
+  if (itemToDelete.value !== null) {
+    await invStore.deleteInvItem(itemToDelete.value)
+    isDialogVisible.value = false
+    itemToDelete.value = null
+  }
 }
 
 onMounted(() => {
@@ -77,20 +87,20 @@ const onPageChange = (page) => {
                   variant="plain"
                   density="comfortable"
                   color="error"
-                  @click="isDialogVisible = true"
+                  @click="confirmDelete(item.id)"
                 >
                   <v-icon>mdi-trash-can</v-icon>
                   <v-tooltip activator="parent" location="top">Delete Item</v-tooltip>
                 </v-btn>
-                <ConfirmDialog
-                  v-model:isDialogVisible="isDialogVisible"
-                  title="Delete  Item"
-                  text="Are you sure deleting this item?"
-                  @confirm="onDelete(item.id)"
-                ></ConfirmDialog>
               </tr>
             </tbody>
           </v-table>
+          <ConfirmDialog
+            v-model:isDialogVisible="isDialogVisible"
+            title="Delete  Item"
+            text="Are you sure deleting this item?"
+            @confirm="onDelete"
+          ></ConfirmDialog>
         </v-col>
       </v-row>
       <v-footer app padless class="bg-white">

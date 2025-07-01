@@ -44,7 +44,7 @@ const onSearch = async () => {
   const search = tableFilters.value.search
 
   if (search?.length >= 3 || search?.length === 0 || search === null) {
-    await itemStore.searchItems(search) // ✅ Pass just the string
+    await itemStore.searchItems(search) //  Pass just the string
   }
 }
 
