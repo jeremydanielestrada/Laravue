@@ -11,7 +11,7 @@ const formData = ref({
 
 //Pinia Store
 const authStore = useAuthStore()
-const id = ref(null)
+const id = authStore.user.id
 const isFormSubmitted = ref(null)
 
 const isPasswordVisible = ref(false)
@@ -19,20 +19,20 @@ const isPasswordConfirmVisible = ref(false)
 const isLoading = ref(false)
 const refVForm = ref()
 
-onMounted(async () => {
-  const userLoaded = await authStore.getUserInformation()
-
-  if (userLoaded) {
-    id.value = authStore.userData.id
-  }
-})
+console.log(id)
 
 const onSubmit = async () => {
   isLoading.value = true
-  const response = await api.put(`/user/password/${id}`, {
+  const response = await api.post(`/user/password/${id}?_method=PUT`, {
     password: formData.value.password,
+    password_confirmation: formData.value.password_confirmation,
   })
 
+  if (response.error) {
+    console.log('Error updating password', response.error)
+  } else {
+    console.log('password succesfully updated')
+  }
   refVForm.value?.reset()
   if (response.data) {
     isFormSubmitted.value = true
@@ -52,7 +52,7 @@ const onFormSubmit = () => {
 </script>
 
 <template>
-  <v-alert
+  <!-- <v-alert
     v-if="isFormSubmitted"
     type="success"
     class="mt-6 success-animation"
@@ -62,7 +62,7 @@ const onFormSubmit = () => {
   >
     <v-alert-title>Password updated Successful!</v-alert-title>
     <div>Your account has been created successfully. Welcome aboard!</div>
-  </v-alert>
+  </v-alert> -->
 
   <!-- <v-alert
     v-else-if=""
