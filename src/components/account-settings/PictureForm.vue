@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { fileExtract } from '@/utils/helpers'
 import api from '@/utils/service'
@@ -29,11 +29,6 @@ watch(
 )
 
 //Load user data on mount
-onMounted(async () => {
-  if (!authStore.user) {
-    await authStore.isAuthenticated()
-  }
-})
 
 const onPreview = async (event) => {
   try {
@@ -102,16 +97,8 @@ const onFormSubmit = () => {
 
 <template>
   <!-- Show loading state while auth is being checked -->
-  <div v-if="authStore.isLoading" class="text-center pa-4">
-    <v-progress-circular indeterminate color="blue-darken-4"></v-progress-circular>
-    <p>Loading user data...</p>
-  </div>
 
-  <v-form
-    ref="refVForm"
-    @submit.prevent="onFormSubmit"
-    v-else-if="authStore.isLoggedIn && authStore.user"
-  >
+  <v-form ref="refVForm" @submit.prevent="onFormSubmit">
     <v-row>
       <v-col cols="12" md="5" sm="6">
         <v-img
@@ -153,9 +140,4 @@ const onFormSubmit = () => {
       </v-col>
     </v-row>
   </v-form>
-
-  <!-- Show message if not authenticated -->
-  <div v-else class="text-center pa-4">
-    <p>Please log in to update your profile picture.</p>
-  </div>
 </template>

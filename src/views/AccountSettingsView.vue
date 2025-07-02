@@ -6,11 +6,17 @@ import ProfileForm from '@/components/account-settings/ProfileForm.vue'
 import PictureForm from '@/components/account-settings/PictureForm.vue'
 
 import { useAuthStore } from '@/stores/authStore'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 // Load variables
 const isDrawerVisible = ref(false)
 const authStore = useAuthStore()
+
+onMounted(async () => {
+  if (!authStore.user) {
+    await authStore.isAuthenticated()
+  }
+})
 </script>
 
 <template>
@@ -40,10 +46,13 @@ const authStore = useAuthStore()
             </p>
           </template>
         </v-card>
-
-        <v-row>
+        <div v-if="authStore.isLoading" class="text-center pa-4">
+          <v-progress-circular indeterminate color="blue-darken-4"></v-progress-circular>
+          <p>Loading user data...</p>
+        </div>
+        <v-row v-if="authStore.isLoggedIn && authStore.user">
           <v-col cols="12" lg="4">
-            <v-card v-if="authStore.isLoggedIn">
+            <v-card>
               <v-card-text>
                 <v-img
                   width="50%"

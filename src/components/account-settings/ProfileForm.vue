@@ -13,31 +13,38 @@ const formData = ref({
   email: '',
 })
 
-const id = ref(null)
+const id = authStore.user.id
 const isLoading = ref(false)
 const refVForm = ref()
 
 onMounted(async () => {
   await authStore.isAuthenticated()
   formData.value = {
-    first_name: authStore.userData?.first_name || '',
-    last_name: authStore.userData?.last_name || '',
-    email: authStore.userData?.email || '',
+    first_name: authStore.user.first_name || '',
+    last_name: authStore.user.last_name || '',
+    email: authStore.user.email || '',
   }
-  id.value = authStore.userData?.id || null
 })
 
 const onSubmit = async () => {
   isLoading.value = true
-  const response = await api.put(`/user/${id}`, {
-    first_name: formData.value.first_name,
-    last_name: formData.value.last_name,
-  })
+
+  console.log('formData', formData)
+
+  const form = new FormData()
+  form.append('first_name', formData.value.first_name)
+  form.append('last_name', formData.value.last_name)
+  form.append('_method', 'PUT') ///method spoofing
+
+  const response = await api.post(`/user/${id}`, form)
   if (response.error) throw Error('Error updating name')
 
-  const { data, error } = await api.put(`/user/email/${id}`, {
-    email: formData.value.email,
-  })
+  // Create a new FormData for the second request
+  const emailForm = new FormData()
+  emailForm.append('email', formData.value.email)
+  emailForm.append('_method', 'PUT')
+
+  const { data, error } = await api.post(`/user/email/${id}`, emailForm)
   if (error) {
     console.log('Error updating email')
   } else if (data) {
@@ -66,10 +73,9 @@ const onFormSubmit = () => {
 
       <v-col cols="12" sm="6">
         <v-text-field
-          readonly
-          disabled
           v-model="formData.email"
           label="Email"
+          type="email"
           prepend-inner-icon="mdi-email-outline"
         ></v-text-field>
       </v-col>
