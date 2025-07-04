@@ -49,10 +49,15 @@ const onPageChange = (page) => {
       <v-row>
         <v-col cols="auto" class="d-flex align-center">
           <v-img
-            :src="authStore.userData?.image || '/images/defaultProfile.jpg'"
-            rounded
-            width="100"
-            aspect-ratio="4/3"
+            :src="
+              authStore.user.image
+                ? `/storage/${authStore.user.image}`
+                : '/images/defaultProfile.jpg'
+            "
+            width="50"
+            class="mx-auto rounded-circle"
+            color="blue-darken-4"
+            aspect-ratio="1"
           >
           </v-img>
           <div class="d-flex flex-column">

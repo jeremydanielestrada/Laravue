@@ -37,6 +37,7 @@ const onFormSubmit = async () => {
     // Optionally save user
 
     localStorage.setItem('user', JSON.stringify(response.data.user))
+    localStorage.setItem('role', JSON.stringify(response.data.user.role))
 
     // Redirect to dashboard or another page
     router.push('/home')
